@@ -15,14 +15,11 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Date;
 
+import br.senai.sc.eventmanager.database.EventDAO;
 import br.senai.sc.eventmanager.models.Event;
 
 public class EventEditorActivity extends AppCompatActivity {
 
-    private final int RESULT_CODE_CREATE_EVENT = 10;
-    private final int RESULT_CODE_EDIT_EVENT = 20;
-    private final int RESULT_CODE_DELETE_EVENT = 30;
-    private boolean editing = false;
     private int id = 0;
     private DatePickerDialog datePicker;
 
@@ -83,8 +80,6 @@ public class EventEditorActivity extends AppCompatActivity {
                         datePicker.show();
                     }}
             });
-
-            editing = true;
             id = event.getId();
         }
     }
@@ -104,16 +99,16 @@ public class EventEditorActivity extends AppCompatActivity {
         Event event = new Event(id, name, location, date);
         Intent intent = new Intent();
         boolean validated = validate(name, location, date);
+
         if (validated == true) {
-            if (editing) {
-                intent.putExtra("editEvent", event);
-                setResult(RESULT_CODE_EDIT_EVENT, intent);
+            EventDAO eventDAO = new EventDAO(getBaseContext());
+            boolean saved = eventDAO.save(event);
+            if (saved) {
+                finish();
             }
             else {
-                intent.putExtra("createEvent", event);
-                setResult(RESULT_CODE_CREATE_EVENT, intent);
+                Toast.makeText(EventEditorActivity.this, "Erro ao salvar ", Toast.LENGTH_SHORT).show();
             }
-            finish();
         }
 
     }
@@ -127,10 +122,14 @@ public class EventEditorActivity extends AppCompatActivity {
         String date = editTextDate.getText().toString();
 
         Event event = new Event(id, name, location, date);
-        Intent intent = new Intent();
-        if (editing) {
-            intent.putExtra("deleteEvent", event);
-            setResult(RESULT_CODE_DELETE_EVENT, intent);
+        EventDAO eventDAO = new EventDAO(getBaseContext());
+        int deleted = eventDAO.delete(event);
+        if (deleted>0){
+            Toast.makeText(EventEditorActivity.this, "Excluido " + deleted + " evento(s) com sucesso", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        else {
+            Toast.makeText(EventEditorActivity.this, "Erro ao excluir evento ", Toast.LENGTH_SHORT).show();
         }
         finish();
     }

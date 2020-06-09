@@ -53,7 +53,7 @@ public class Event implements Serializable {
     @NonNull
     @Override
     public String toString() {
-        return name + " - " + location + " - " + date;
+        return id + ": " + name + " - " + location + " - " + date;
     }
 }
 

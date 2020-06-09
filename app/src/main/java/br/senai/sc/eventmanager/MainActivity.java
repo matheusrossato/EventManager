@@ -13,15 +13,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import br.senai.sc.eventmanager.database.EventDAO;
 import br.senai.sc.eventmanager.models.Event;
 
 public class MainActivity extends AppCompatActivity {
-
-    private final int REQUEST_CODE_CREATE_EVENT = 1;
-    private final int RESULT_CODE_CREATE_EVENT = 10;
-    private final int REQUEST_CODE_EDIT_EVENT = 2;
-    private final int RESULT_CODE_EDIT_EVENT = 20;
-    private final int RESULT_CODE_DELETE_EVENT = 30;
 
     private ListView listViewEvents;
     private ArrayAdapter<Event> adapterEvents;
@@ -36,28 +31,36 @@ public class MainActivity extends AppCompatActivity {
         listViewEvents = findViewById(R.id.listView_events);
         ArrayList<Event> eventArrayList = new ArrayList<Event>();
 
-        adapterEvents = new ArrayAdapter<Event>(MainActivity.this, android.R.layout.simple_list_item_1, eventArrayList);
-        listViewEvents.setAdapter(adapterEvents);
         defineOnClickListenerListView();
     }
-    private void defineOnClickListenerListView(){
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventDAO eventDAO = new EventDAO(getBaseContext());
+        adapterEvents = new ArrayAdapter<Event>(MainActivity.this,
+                android.R.layout.simple_list_item_1, eventDAO.list());
+        listViewEvents.setAdapter(adapterEvents);
+    }
+
+    private void defineOnClickListenerListView() {
         listViewEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Event eventClicked = adapterEvents.getItem(position);
                 Intent intent = new Intent(MainActivity.this, EventEditorActivity.class);
-                intent.putExtra("editEvent", eventClicked );
-                startActivityForResult(intent, REQUEST_CODE_EDIT_EVENT);
+                intent.putExtra("editEvent", eventClicked);
+                startActivity(intent);
             }
         });
-
     }
 
     public void onClickCreateEvent(View v) {
         Intent intent = new Intent(MainActivity.this, EventEditorActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_CREATE_EVENT);
+        startActivity(intent);
     }
-
+}
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode== REQUEST_CODE_CREATE_EVENT && resultCode== RESULT_CODE_CREATE_EVENT){
@@ -93,4 +96,4 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 }
-
+*/
