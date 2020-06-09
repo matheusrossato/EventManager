@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -58,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
     public void onClickCreateEvent(View v) {
         Intent intent = new Intent(MainActivity.this, EventEditorActivity.class);
         startActivity(intent);
+    }
+    public void onClickSearch(View v){
+        EditText editTextSearchEvent = findViewById(R.id.editText_searchEvent);
+        String nameSearch = editTextSearchEvent.getText().toString();
+        Toast.makeText(MainActivity.this, " Buscando eventos com nome: " + nameSearch, Toast.LENGTH_LONG).show();
+        EventDAO eventDAO = new EventDAO(getBaseContext());
+        if (nameSearch!=null && !nameSearch.isEmpty()) {
+            adapterEvents = new ArrayAdapter<Event>(MainActivity.this,
+                    android.R.layout.simple_list_item_1, eventDAO.search(nameSearch));
+        } else {
+            adapterEvents = new ArrayAdapter<Event>(MainActivity.this,
+                    android.R.layout.simple_list_item_1, eventDAO.list());
+        }
+        listViewEvents.setAdapter(adapterEvents);
     }
 }
 /*

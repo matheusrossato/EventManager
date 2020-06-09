@@ -7,6 +7,55 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
+    <TextView
+        android:id="@+id/textView_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Busca evento por nome:" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editText_searchEvent"
+            android:layout_width="333dp"
+            android:layout_height="wrap_content"
+            android:hint="Nome do evento"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btn_searchEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickSearch"
+            android:text="Buscar" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_orderAsc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@android:drawable/arrow_up_float"
+            android:text="Asc" />
+
+        <Button
+            android:id="@+id/btn_orderDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@android:drawable/arrow_down_float"
+            android:text="Desc" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/listView_events"
         android:layout_width="match_parent"

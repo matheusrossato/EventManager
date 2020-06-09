@@ -14,6 +14,7 @@ import br.senai.sc.eventmanager.models.Event;
 public class EventDAO {
     private DBGateway dbGateway;
     private final String SQL_LIST_ALL = "SELECT * FROM " + EventEntity.TABLE_NAME;
+    private final String SQL_LIST_SEARCH = "SELECT * FROM " + EventEntity.TABLE_NAME + " WHERE " + EventEntity.COLUMN_NAME_NAME + " LIKE ? ;";
 
     public EventDAO(Context context){
         dbGateway = DBGateway.getInstance(context);
@@ -47,6 +48,20 @@ public class EventDAO {
     public List<Event> list(){
         List<Event> events = new ArrayList<>();
         Cursor cursor = dbGateway.getDatabase().rawQuery(SQL_LIST_ALL, null);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(EventEntity._ID));
+            String name = cursor.getString(cursor.getColumnIndex(EventEntity.COLUMN_NAME_NAME));
+            String location = cursor.getString(cursor.getColumnIndex(EventEntity.COLUMN_NAME_LOCATION));
+            String date = cursor.getString(cursor.getColumnIndex(EventEntity.COLUMN_NAME_DATE));
+            events.add(new Event(id, name, location, date));
+        }
+        cursor.close();
+        return events;
+    }
+
+    public List<Event> search(String searchString){
+        List<Event> events = new ArrayList<>();
+        Cursor cursor = dbGateway.getDatabase().rawQuery(SQL_LIST_SEARCH,new String[]{searchString});
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(EventEntity._ID));
             String name = cursor.getString(cursor.getColumnIndex(EventEntity.COLUMN_NAME_NAME));
