@@ -13,8 +13,10 @@ import br.senai.sc.eventmanager.models.Event;
 
 public class EventDAO {
     private DBGateway dbGateway;
-    private final String SQL_LIST_ALL = "SELECT * FROM " + EventEntity.TABLE_NAME;
-    private final String SQL_LIST_SEARCH = "SELECT * FROM " + EventEntity.TABLE_NAME + " WHERE " + EventEntity.COLUMN_NAME_NAME + " LIKE ? ;";
+    public String orderByName = "ASC";
+    private final String SQL_LIST_ALL = "SELECT * FROM " + EventEntity.TABLE_NAME + " ORDER BY " + EventEntity.COLUMN_NAME_NAME + " ";
+    private final String SQL_LIST_SEARCH = "SELECT * FROM " + EventEntity.TABLE_NAME + " WHERE " + EventEntity.COLUMN_NAME_NAME + " LIKE ? " + "ORDER BY " + EventEntity.COLUMN_NAME_NAME + " ";
+    //private final String SQL_LIST_SEARCH_WHERE =  ";
 
     public EventDAO(Context context){
         dbGateway = DBGateway.getInstance(context);
@@ -45,9 +47,17 @@ public class EventDAO {
         return 0;
     }
 
-    public List<Event> list(){
+    public List<Event> list(boolean nameOrderByAsc){
         List<Event> events = new ArrayList<>();
-        Cursor cursor = dbGateway.getDatabase().rawQuery(SQL_LIST_ALL, null);
+        if (!nameOrderByAsc){
+            orderByName = "DESC";
+        } else {
+            orderByName = "ASC";
+        }
+
+        System.out.println("SQL LIST ALL:");
+        System.out.println(SQL_LIST_ALL + orderByName);
+        Cursor cursor = dbGateway.getDatabase().rawQuery(SQL_LIST_ALL + orderByName, null);
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(EventEntity._ID));
             String name = cursor.getString(cursor.getColumnIndex(EventEntity.COLUMN_NAME_NAME));
@@ -59,9 +69,17 @@ public class EventDAO {
         return events;
     }
 
-    public List<Event> search(String searchString){
+    public List<Event> search(String searchString, boolean nameOrderByAsc){
         List<Event> events = new ArrayList<>();
-        Cursor cursor = dbGateway.getDatabase().rawQuery(SQL_LIST_SEARCH,new String[]{searchString});
+        if (!nameOrderByAsc){
+            orderByName = "DESC";
+        }
+        else {
+            orderByName = "ASC";
+        }
+        System.out.println("SQL SEARCH:");
+        System.out.println(SQL_LIST_SEARCH + orderByName);
+        Cursor cursor = dbGateway.getDatabase().rawQuery(SQL_LIST_SEARCH + orderByName,new String[]{searchString});
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(EventEntity._ID));
             String name = cursor.getString(cursor.getColumnIndex(EventEntity.COLUMN_NAME_NAME));
